@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>离线制品上传</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>离线制品上传</h1>
+  <p class="sub">分片续传 · 内容校验 · 断线可恢复</p>
+</header>
+
+<main>
+  <section class="card" id="setup-card">
+    <h2>1. 选择文件</h2>
+    <form id="upload-form" autocomplete="off">
+      <label class="field">
+        <span>镜像包文件</span>
+        <input id="file-input" type="file" required>
+      </label>
+      <label class="field">
+        <span>整包预期 SHA-256</span>
+        <input id="sha-input" type="text" maxlength="64" spellcheck="false"
+               placeholder="64 位十六进制摘要" required>
+      </label>
+      <p class="hint">文件大小与摘要共同确定一次上传会话。请使用与文件内容一致的摘要。</p>
+      <div class="actions">
+        <button id="start-btn" type="submit" class="primary">开始上传 / 继续上传</button>
+        <button id="reset-btn" type="button">换一个文件</button>
+      </div>
+      <p id="setup-error" class="error" role="alert" hidden></p>
+    </form>
+  </section>
+
+  <section class="card" id="session-card" hidden>
+    <h2>2. 上传会话</h2>
+    <dl class="meta">
+      <dt>会话号</dt><dd><code id="session-id"></code></dd>
+      <dt>文件</dt><dd id="session-file"></dd>
+      <dt>大小</dt><dd id="session-size"></dd>
+      <dt>分片</dt><dd id="session-chunks"></dd>
+      <dt>状态</dt><dd><span id="session-status" class="badge"></span></dd>
+    </dl>
+
+    <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+    <p class="progress-label"><span id="progress-text">0 / 0</span></p>
+
+    <div class="actions">
+      <button id="resume-btn" type="button">查询已收分片 / 补传缺片</button>
+      <button id="complete-btn" type="button" class="primary">完成并校验</button>
+      <button id="download-btn" type="button" class="primary" hidden>下载</button>
+      <button id="cancel-btn" type="button" hidden>停止</button>
+    </div>
+    <p id="session-error" class="error" role="alert" hidden></p>
+    <p id="session-note" class="note" hidden></p>
+
+    <details>
+      <summary>分片明细</summary>
+      <div id="chunk-list" class="chunks"></div>
+    </details>
+    <details>
+      <summary>事件日志</summary>
+      <ol id="log" class="log"></ol>
+    </details>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

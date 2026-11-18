@@ -1,0 +1,20 @@
+services:
+  uploader:
+    build: .
+    image: artifact-uploader:latest
+    container_name: artifact-uploader
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      DATA_DIR: /data
+      # 8 MiB per chunk. Existing sessions keep the chunk size recorded at
+      # creation, so changing this is safe for in-progress uploads.
+      CHUNK_SIZE: "${CHUNK_SIZE:-8388608}"
+      # 1 worker by default; >1 is supported (flock + SQLite WAL).
+      WEB_CONCURRENCY: "${WEB_CONCURRENCY:-1}"
+    volumes:
+      - artifact-data:/data
+    restart: unless-stopped
+
+volumes:
+  artifact-data:
